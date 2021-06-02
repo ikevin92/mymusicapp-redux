@@ -1,11 +1,13 @@
 import axios from 'axios';
 // importacion de credenciales de los key de spotify
 import { Credenciales } from '../config/credenciales';
+import { startLoading, finishLoading } from './uiDucks';
 
 //initialState
 const dataInicial = {
-    token: JSON.parse( localStorage.getItem( 'token' ) ) || null,
-    
+    token: null,
+    // token: JSON.parse( localStorage.getItem( 'token' ) ) || null,
+
     genresList: [],
     genreSelected: null,
 
@@ -24,7 +26,7 @@ const GET_PLAYLIST = 'GET_PLAYLIST';
 const PLAYLIST_SELECTED = 'PLAYLIST_SELECTED';
 const GET_TRACKS_LIST = 'GET_TRACKS_LIST';
 const TRACKS_SELECTED = 'TRACKS_SELECTED';
-const GET_FAVORITE = 'GET_FAVORITE';
+const GET_FAVORITE_LIST = 'GET_FAVORITE_LIST';
 const GET_TOKEN = 'GET_TOKEN';
 
 
@@ -41,12 +43,14 @@ export default function spotifyReducer ( state = dataInicial, action ) {
         case GET_GENRE_LIST:
             return {
                 ...state,
-                genresList: action.payload
+                genresList: action.payload,
+
             };
         case GENRE_SELECTED:
             return {
                 ...state,
-                genreSelected: action.payload
+                genreSelected: action.payload,
+                tracksList: []
             };
         case GET_PLAYLIST:
             return {
@@ -67,6 +71,11 @@ export default function spotifyReducer ( state = dataInicial, action ) {
             return {
                 ...state,
                 trackSelected: action.payload
+            };
+        case GET_FAVORITE_LIST:
+            return {
+                ...state,
+                favoritesList: action.payload
             };
         default:
             return {
@@ -120,31 +129,39 @@ export const authLoginAPIAccion = ( token ) => async ( dispatch, getState ) => {
 
     console.log( 'validacion token', token );
 
-    const tokenStorage = JSON.parse( localStorage.getItem( 'token' ) );
+    // const tokenStorage = JSON.parse( localStorage.getItem( 'token' ) );
 
     if ( token ) {
-        if ( token === tokenStorage ) {
-            console.log( 'coinciden' );
-            return;
 
-        } else {
+        dispatch( {
+            type: GET_TOKEN,
+            payload: token
+        } );
 
-            localStorage.setItem( 'token', JSON.stringify( token ) );
-        }
+        localStorage.setItem( 'token', JSON.stringify( token ) );
+
     } else {
 
         localStorage.setItem( 'token', JSON.stringify( token ) );
     }
 
-
-
 };
+
+
+
 
 // GENRES
 export const obtenerGenresListAccion = () => async ( dispatch, getState ) => {
 
-    const token = JSON.parse( localStorage.getItem( 'token' ) );
+    console.log( 'inicio el genres accion' );
+    dispatch( startLoading() );
+
+    // const token = JSON.parse( localStorage.getItem( 'token' ) );
+    console.log( 'getState genres accion', getState().spotify.token );
+
+    const token = ( getState().spotify.token );
     console.log( { token } );
+
 
     try {
 
@@ -156,13 +173,14 @@ export const obtenerGenresListAccion = () => async ( dispatch, getState ) => {
         const { items } = res.data.categories;
         console.log( { genres: items } );
 
-
         dispatch( {
             type: GET_GENRE_LIST,
             payload: items
         } );
 
         console.log( 'getState sportify', getState().spotify );
+
+        dispatch( finishLoading() );
 
 
     } catch ( error ) {
@@ -285,7 +303,7 @@ export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
             }
         } );
 
-        console.log( res );
+        console.log( "agrega favorito: ", res );
 
         // const { items } = res.data;
 
@@ -299,6 +317,43 @@ export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
 
     } catch ( error ) {
 
+        console.log( error );
+    }
+};
+
+export const obtenerTracksFavoritosAccion = () => async ( dispatch, getState ) => {
+
+    const token = JSON.parse( localStorage.getItem( 'token' ) );
+    // console.log( { token } );
+
+    console.log( 'getState trakcsli', getState().spotify.genreSelected );
+
+    // se obtiene el genero seleccionado
+    // const { playlistSelected } = getState().spotify;
+    // console.log( genreSelected );
+
+    try {
+
+        const res = await axios( `https://api.spotify.com/v1/me/tracks?offset=0&limit=20`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        } );
+
+        console.log( res.data.items );
+
+        const { items } = res.data;
+
+        dispatch( {
+            type: GET_FAVORITE_LIST,
+            payload: items
+        } );
+
+        console.log( 'getState sportify', getState().spotify );
+
+
+    } catch ( error ) {
         console.log( error );
     }
 };

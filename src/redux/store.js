@@ -5,11 +5,13 @@ import thunk from 'redux-thunk';
 
 // importamos los reducers
 import spotifyReducer from './spotifyDucks';
+import uiReducer from './uiDucks';
 // import usuarioReducer, { leerUsuarioActivoAccion } from './usuarioDucks';
 
 // se incluyen los reducers
 const rootReducer = combineReducers( {
     spotify: spotifyReducer,
+    ui: uiReducer
     // usuario: usuarioReducer
 } );
 
