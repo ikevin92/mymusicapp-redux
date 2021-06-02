@@ -16,6 +16,9 @@ const Home = () => {
 
     //data del state
     const { genresList, genreSelected, token, playlist, playlistSelected } = useSelector( state => state.spotify );
+    const { loading } = useSelector( state => state.ui );
+    console.log( { loading } );
+
     console.log( { genresList } );
     console.log( { token_home: token } );
 
@@ -48,14 +51,8 @@ const Home = () => {
 
         const fecthData = () => {
 
-            if ( !localStorage.getItem( 'token' ) ) {
-
-                dispatch( leerTokenAccion() );
-
-            } else {
-
-                dispatch( obtenerGenresListAccion() );
-            }
+            dispatch( obtenerGenresListAccion() );
+            
         };
 
         fecthData();
@@ -69,11 +66,21 @@ const Home = () => {
             <form onSubmit={ handleSubtmitBuscarTracks } >
 
                 {/* GENRES LIST */ }
-                <Dropdown
-                    options={ genresList }
-                    selectedValue={ genreSelected }
-                    changed={ handleGenreOnChange }
-                />
+                {
+                    !loading ?
+
+                        <Dropdown
+                            options={ genresList }
+                            selectedValue={ genreSelected }
+                            changed={ handleGenreOnChange }
+                        />
+                        :
+                        <div className="spinner-grow" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+
+                }
+
 
                 {/* PLAYLISTS */ }
                 {

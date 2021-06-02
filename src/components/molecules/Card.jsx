@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { agregarTrackFavoritoAccion, c } from '../../redux/spotifyDucks';
+import { agregarTrackFavoritoAccion} from '../../redux/spotifyDucks';
 
 const Card = ( props ) => {
 
