@@ -4,7 +4,8 @@ import { Credenciales } from '../config/credenciales';
 
 //initialState
 const dataInicial = {
-    token: null,
+    token: JSON.parse( localStorage.getItem( 'token' ) ) || null,
+    
     genresList: [],
     genreSelected: null,
 
@@ -12,7 +13,7 @@ const dataInicial = {
     playlistSelected: null,
     tracksList: [],
     trackSelected: null,
-    
+
     favoritesList: []
 };
 
@@ -77,7 +78,7 @@ export default function spotifyReducer ( state = dataInicial, action ) {
 
 
 // actions
-
+//AUTH
 export const leerTokenAccion = () => async ( dispatch, getState ) => {
 
     const spotify = Credenciales();
@@ -115,6 +116,29 @@ export const leerTokenAccion = () => async ( dispatch, getState ) => {
     }
 };
 
+export const authLoginAPIAccion = ( token ) => async ( dispatch, getState ) => {
+
+    console.log( 'validacion token', token );
+
+    const tokenStorage = JSON.parse( localStorage.getItem( 'token' ) );
+
+    if ( token ) {
+        if ( token === tokenStorage ) {
+            console.log( 'coinciden' );
+            return;
+
+        } else {
+
+            localStorage.setItem( 'token', JSON.stringify( token ) );
+        }
+    } else {
+
+        localStorage.setItem( 'token', JSON.stringify( token ) );
+    }
+
+
+
+};
 
 // GENRES
 export const obtenerGenresListAccion = () => async ( dispatch, getState ) => {
@@ -242,4 +266,39 @@ export const obtenerTracksListAccion = () => async ( dispatch, getState ) => {
     }
 };
 
+// FAVORITOS
+export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getState ) => {
 
+    const token = JSON.parse( localStorage.getItem( 'token' ) );
+    // console.log( { token } );
+
+    // se obtiene el genero seleccionado
+    // const { playlistSelected } = getState().spotify;
+    // console.log( genreSelected );
+
+    try {
+
+        const res = await axios( `https://api.spotify.com/v1/me/tracks?ids=${ favorito }`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        } );
+
+        console.log( res );
+
+        // const { items } = res.data;
+
+        // dispatch( {
+        //     type: GET_TRACKS_LIST,
+        //     payload: items
+        // } );
+
+        // console.log( 'getState sportify', getState().spotify );
+
+
+    } catch ( error ) {
+
+        console.log( error );
+    }
+};

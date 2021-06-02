@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { leerTokenAccion, obtenerGenresListAccion, seleccionarGenreAccion, obtenerPlaylistAccion, seleccionarPlaylistAccion, obtenerTracksListAccion } from '../../redux/spotifyDucks';
@@ -8,6 +8,9 @@ import ListCards from '../organisms/ListCards';
 
 
 const Home = () => {
+
+
+    const [ disabled, setDisabled ] = useState( true );
 
     const dispatch = useDispatch();
 
@@ -30,6 +33,8 @@ const Home = () => {
         //dispatch para seleccionar un elemento
         dispatch( seleccionarPlaylistAccion( value ) );
 
+        setDisabled( false );
+
     };
 
     const handleSubtmitBuscarTracks = ( e ) => {
@@ -48,6 +53,7 @@ const Home = () => {
                 dispatch( leerTokenAccion() );
 
             } else {
+
                 dispatch( obtenerGenresListAccion() );
             }
         };
@@ -82,7 +88,9 @@ const Home = () => {
 
                 <button
                     type="submit"
-                    className="btn btn-dark"
+                    className="btn btn-light"
+                    disabled={ disabled }
+                // disabled={ false }
                 // onClick={ handleLoadGenres }
                 >
                     Buscar
@@ -90,11 +98,11 @@ const Home = () => {
 
                 {/* TRACKS */ }
                 <ListCards
-                    // clicked={ listboxClicked }
+                // clicked={ listboxClicked }
                 />
 
-                
-               
+
+
             </form>
         </div>
     );
