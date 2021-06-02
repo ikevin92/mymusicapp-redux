@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logoutAccion } from '../../redux/spotifyDucks';
 
 
 const Navbar = () => {
+
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch( logoutAccion() );
+    };
+
     return (
 
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -21,13 +30,13 @@ const Navbar = () => {
                         <li className="nav-item">
                             <Link className="nav-link" to="/favorites">Favorites</Link>
                         </li>
- 
+
                     </ul>
-                    
-                    <form className="d-flex">
-                        {/* <button className="btn btn-secondary my-2 ml-2 my-sm-0">Login</button> */}
-                        <button className="btn btn-secondary my-2  ml-2 my-sm-0" >Logout</button>
-                    </form>
+
+                    <div className="d-flex">
+                        {/* <button className="btn btn-secondary my-2 ml-2 my-sm-0">Login</button> */ }
+                        <button type="button" onClick={ handleLogout } className="btn btn-secondary my-2  ml-2 my-sm-0" >Logout</button>
+                    </div>
                 </div>
             </div>
         </nav>

@@ -27,7 +27,10 @@ const PLAYLIST_SELECTED = 'PLAYLIST_SELECTED';
 const GET_TRACKS_LIST = 'GET_TRACKS_LIST';
 const TRACKS_SELECTED = 'TRACKS_SELECTED';
 const GET_FAVORITE_LIST = 'GET_FAVORITE_LIST';
+const ADD_FAVORITE = 'ADD_FAVORITE';
 const GET_TOKEN = 'GET_TOKEN';
+const DELETE_TRACK_FAVORTES = 'DELETE_TRACK_FAVORTES';
+const LOGOUT = 'LOGOUT';
 
 
 // reducers
@@ -44,7 +47,7 @@ export default function spotifyReducer ( state = dataInicial, action ) {
             return {
                 ...state,
                 genresList: action.payload,
-
+                tracksList: [],
             };
         case GENRE_SELECTED:
             return {
@@ -76,6 +79,28 @@ export default function spotifyReducer ( state = dataInicial, action ) {
             return {
                 ...state,
                 favoritesList: action.payload
+            };
+        case ADD_FAVORITE:
+            return {
+                ...state,
+                // favoritesList: [
+                //     action.payload,
+                //     ...state.favoritesList,
+
+                // ]
+            };
+        case DELETE_TRACK_FAVORTES:
+            return {
+                ...state,
+                favoritesList: state.favoritesList.filter( favorite => favorite.track.id !== action.payload )
+
+                // state.notes.filter( note => note.id !== action.payload )
+            };
+        case LOGOUT:
+            localStorage.removeItem( 'token' );
+            return {
+                ...dataInicial,
+
             };
         default:
             return {
@@ -185,6 +210,10 @@ export const obtenerGenresListAccion = () => async ( dispatch, getState ) => {
 
     } catch ( error ) {
         console.log( 'ERROR GENRESLIST ACCION', error );
+        dispatch( {
+            type: LOGOUT,
+
+        } );
         localStorage.removeItem( 'token' );
     }
 };
@@ -307,10 +336,48 @@ export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
 
         // const { items } = res.data;
 
-        // dispatch( {
-        //     type: GET_TRACKS_LIST,
-        //     payload: items
-        // } );
+        dispatch( {
+            type: ADD_FAVORITE,
+            payload: favorito
+        } );
+
+
+        // filtrarlo y pasarselo al payload
+        console.log( 'getState sportify', getState().spotify );
+
+
+    } catch ( error ) {
+
+        console.log( error );
+    }
+};
+
+export const eliminaTrackFavoritoAccion = ( favorito ) => async ( dispatch, getState ) => {
+
+    const token = JSON.parse( localStorage.getItem( 'token' ) );
+    // console.log( { token } );
+
+    // se obtiene el genero seleccionado
+    // const { playlistSelected } = getState().spotify;
+    // console.log( genreSelected );
+
+    try {
+
+        const res = await axios( `https://api.spotify.com/v1/me/tracks?ids=${ favorito }`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        } );
+
+        console.log( "elimina favorito: ", res );
+
+        // const { items } = res.data;
+
+        dispatch( {
+            type: DELETE_TRACK_FAVORTES,
+            payload: favorito
+        } );
 
         // console.log( 'getState sportify', getState().spotify );
 
@@ -356,4 +423,15 @@ export const obtenerTracksFavoritosAccion = () => async ( dispatch, getState ) =
     } catch ( error ) {
         console.log( error );
     }
+};
+
+
+export const logoutAccion = () => ( dispatch, getState ) => {
+
+
+
+    dispatch( {
+        type: LOGOUT
+    } );
+
 };
