@@ -19,7 +19,8 @@ const Favorites = () => {
 
     return (
         <div>
-            Favorites
+            
+            <h2>Favorites</h2>
             {/* TRACKS */ }
             <ListCards
             // clicked={ listboxClicked }
