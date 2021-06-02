@@ -13,7 +13,7 @@ const UIFINISHLOADING = '[UI] FINISH LOADING';;
 // reducers
 export default function uiReducer ( state = dataInicial, action ) {
 
-    console.log( { action } );
+    // console.log( { action } );
 
     switch ( action.type ) {
 

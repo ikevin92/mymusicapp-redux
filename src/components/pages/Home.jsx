@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { leerTokenAccion, obtenerGenresListAccion, seleccionarGenreAccion, obtenerPlaylistAccion, seleccionarPlaylistAccion, obtenerTracksListAccion } from '../../redux/spotifyDucks';
+import { obtenerGenresListAccion, seleccionarGenreAccion, obtenerPlaylistAccion, seleccionarPlaylistAccion, obtenerTracksListAccion } from '../../redux/spotifyDucks';
 
 import Dropdown from '../molecules/Dropdown';
 import ListCards from '../organisms/ListCards';

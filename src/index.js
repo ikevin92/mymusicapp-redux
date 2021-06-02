@@ -10,6 +10,9 @@ import { Provider } from 'react-redux';
 // redux store
 import generateStore from './redux/store';
 
+import 'animate.css';
+
+
 
 // inicializamos del store de redux
 const store = generateStore();
