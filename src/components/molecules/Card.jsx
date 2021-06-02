@@ -5,6 +5,7 @@ import { agregarTrackFavoritoAccion} from '../../redux/spotifyDucks';
 const Card = ( props ) => {
 
     console.log( "card porps", props.values );
+    console.log( "card favorite", props.favorite );
     const { album, artists, name, id } = props.values;
     const dispatch = useDispatch();
 
@@ -42,14 +43,14 @@ const Card = ( props ) => {
                             <span
                                 type="button"
                                 onClick={ handleLike }
-                                className={ `badge rounded-pill ${ likeStatus ? "bg-warning" : "bg-light" }` }
+                                className={ `badge rounded-pill ${ likeStatus || props.favorite !== undefined ? "bg-warning" : "bg-light" }` }
                             >
                                 {
-                                    likeStatus ?
+                                    likeStatus || props.favorite !== undefined ?
 
-                                        <i class="fa fa-heart"></i>
+                                        <i className="fa fa-heart"></i>
                                         :
-                                        <i class="far fa-heart"></i>
+                                        <i className="far fa-heart"></i>
                                 }
                                 Like
                             </span>
