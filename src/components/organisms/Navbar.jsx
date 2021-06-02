@@ -1,15 +1,35 @@
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logoutAccion } from '../../redux/spotifyDucks';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutAccion, obtenerUsuarioAccion } from '../../redux/spotifyDucks';
+import { useEffect } from 'react';
 
 
 const Navbar = () => {
+
+    const { user } = useSelector( state => state.spotify );
+
+    console.log( { user: user.images[ 0 ] } );
+
 
     const dispatch = useDispatch();
 
     const handleLogout = () => {
         dispatch( logoutAccion() );
     };
+
+
+    useEffect( () => {
+
+        const fecthData = () => {
+
+            dispatch( obtenerUsuarioAccion() );
+
+        };
+
+        fecthData();
+
+
+    }, [ dispatch ] );
 
     return (
 
@@ -34,6 +54,20 @@ const Navbar = () => {
                     </ul>
 
                     <div className="d-flex">
+
+                        <div className="navbar-brand">
+
+                            { user.display_name}
+
+                        </div>
+
+
+                        <div className="navbar-brand">
+
+                            <img src={ user.images[ 0 ].url } alt="" width="30" height="30" className="img-fluid rounded" />
+                            
+                        </div>
+
                         {/* <button className="btn btn-secondary my-2 ml-2 my-sm-0">Login</button> */ }
                         <button type="button" onClick={ handleLogout } className="btn btn-secondary my-2  ml-2 my-sm-0" >Logout</button>
                     </div>

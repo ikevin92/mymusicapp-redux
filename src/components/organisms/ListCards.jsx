@@ -43,7 +43,7 @@ const ListCards = () => {
         // <div className="mt-5 row row-cols-1 row-cols-sm-2 row-cols-md-3 g-6 container">
         <div>
             {/* <div class="row row-cols-1 row-cols-md-3 g-4"> */ }
-            <div className="card-group mt-2 container align-items-center">
+            <div className="card-group mt-2 container align-items-center animate__animated animate__fadeInDown animate__delay-1s">
 
                 {
                     tracksArray.map( ( item, idx ) =>
@@ -51,7 +51,7 @@ const ListCards = () => {
                             key={ idx }
                             id={ item.track.id }
                             values={ item.track }
-                            favorite={ favoritesList.find( element => element.track.id === item.track.id ) }
+                            favorite={ favoritesList.find( ( { track } ) => track.id === item.track.id ) }
                             onClick={ () => handleOnClick( item.track.id ) }
                         />
 

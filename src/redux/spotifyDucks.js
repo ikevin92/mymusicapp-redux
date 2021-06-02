@@ -6,6 +6,7 @@ import { startLoading, finishLoading } from './uiDucks';
 //initialState
 const dataInicial = {
     token: null,
+    user: null,
     // token: JSON.parse( localStorage.getItem( 'token' ) ) || null,
 
     genresList: [],
@@ -29,19 +30,25 @@ const TRACKS_SELECTED = 'TRACKS_SELECTED';
 const GET_FAVORITE_LIST = 'GET_FAVORITE_LIST';
 const ADD_FAVORITE = 'ADD_FAVORITE';
 const GET_TOKEN = 'GET_TOKEN';
+const GET_USER = 'GET_USER';
 const DELETE_TRACK_FAVORTES = 'DELETE_TRACK_FAVORTES';
 const LOGOUT = 'LOGOUT';
 
 
 // reducers
 export default function spotifyReducer ( state = dataInicial, action ) {
-    console.log( { action } );
+    // console.log( { action } );
     switch ( action.type ) {
 
         case GET_TOKEN:
             return {
                 ...state,
                 token: action.payload
+            };
+        case GET_USER:
+            return {
+                ...state,
+                user: action.payload
             };
         case GET_GENRE_LIST:
             return {
@@ -81,13 +88,13 @@ export default function spotifyReducer ( state = dataInicial, action ) {
                 favoritesList: action.payload
             };
         case ADD_FAVORITE:
+
             return {
                 ...state,
-                // favoritesList: [
-                //     action.payload,
-                //     ...state.favoritesList,
-
-                // ]
+                favoritesList: [
+                    ...state.favoritesList,
+                    ...action.payload
+                ]
             };
         case DELETE_TRACK_FAVORTES:
             return {
@@ -172,6 +179,44 @@ export const authLoginAPIAccion = ( token ) => async ( dispatch, getState ) => {
 
 };
 
+
+export const obtenerUsuarioAccion = () => async ( dispatch, getState ) => {
+
+    const token = JSON.parse( localStorage.getItem( 'token' ) );
+
+    // const tokenStorage = JSON.parse( localStorage.getItem( 'token' ) );
+
+    console.log( 'getState playlistaction', getState().spotify.genreSelected );
+
+    // se obtiene el genero seleccionado
+    // const { genreSelected } = getState().spotify;
+    // console.log( genreSelected );
+
+    try {
+
+        const res = await axios( `https://api.spotify.com/v1/me`, {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token }
+        } );
+
+        console.log( { usuario: res.data } );
+
+        const { data } = res;
+
+        dispatch( {
+            type: GET_USER,
+            payload: data
+        } );
+
+        console.log( 'getState sportify', getState().spotify );
+
+
+    } catch ( error ) {
+        console.log( error );
+    }
+
+
+};
 
 
 
@@ -320,8 +365,14 @@ export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
     // console.log( { token } );
 
     // se obtiene el genero seleccionado
-    // const { playlistSelected } = getState().spotify;
+    const { tracksList } = getState().spotify;
     // console.log( genreSelected );
+
+    // se busca el elemento que se le va a pasar al payload
+    const filtrado = tracksList.filter( ( { track } ) => track.id === favorito );
+
+
+    //primero se valida si existe en el listado de favortos sino le pasamos el nuevo track
 
     try {
 
@@ -338,7 +389,7 @@ export const agregarTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
 
         dispatch( {
             type: ADD_FAVORITE,
-            payload: favorito
+            payload: filtrado
         } );
 
 
@@ -358,8 +409,6 @@ export const eliminaTrackFavoritoAccion = ( favorito ) => async ( dispatch, getS
     // console.log( { token } );
 
     // se obtiene el genero seleccionado
-    // const { playlistSelected } = getState().spotify;
-    // console.log( genreSelected );
 
     try {
 
