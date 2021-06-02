@@ -25,13 +25,14 @@ const AppRouter = () => {
 
                     <Route exact path="/" component={ Home } />
                     <Route exact path="/favorites" component={ Favorites } />
+                    <Redirect to="/" />
 
                 </Switch>
 
             </div>
 
         </Router>
-    )
-}
+    );
+};
 
-export default AppRouter
+export default AppRouter;
